@@ -19,7 +19,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 
-import static com.github.electroluxv2.ExampleMod.LOGGER;
+import static com.github.electroluxv2.GitBackupMod.LOGGER;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin extends ReentrantThreadExecutor<ServerTask> {

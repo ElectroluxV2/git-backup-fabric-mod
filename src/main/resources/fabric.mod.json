@@ -15,7 +15,7 @@
 	"environment": "server",
 	"entrypoints": {
 		"main": [
-			"com.github.electroluxv2.ExampleMod"
+			"com.github.electroluxv2.GitBackupMod"
 		]
 	},
 	"mixins": [
