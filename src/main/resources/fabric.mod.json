@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "git-backup",
+	"version": "${version}",
+	"name": "git-backup",
+	"description": "This executes git add <world> && git commit -m <current date time> && git pushall. See https://stackoverflow.com/a/18674313/7132461 on how to configure pushall",
+	"authors": [
+		"Mateusz Budzisz"
+	],
+	"contact": {
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/git-backup/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.github.electroluxv2.ExampleMod"
+		]
+	},
+	"mixins": [
+		"git-backup.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.22",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_3218": ["com/github/electroluxv2/interfaces/WorldPropertiesGetter"]
+		}
+	}
+}
