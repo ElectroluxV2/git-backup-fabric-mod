@@ -8,11 +8,11 @@
 		"Mateusz Budzisz"
 	],
 	"contact": {
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/ElectroluxV2/git-backup-fabric-mod"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/git-backup/icon.png",
-	"environment": "*",
+	"environment": "server",
 	"entrypoints": {
 		"main": [
 			"com.github.electroluxv2.ExampleMod"
