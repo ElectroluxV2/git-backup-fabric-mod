@@ -1,3 +1,4 @@
+![](./src/main/resources/assets/backup-scripts/icon.png)
 # What is this?
 This mod hooks itself to built in save system and executes scripts:
 
@@ -104,7 +105,7 @@ Example output:
 [15:43:50] [Server thread/INFO] (BackupScripts) Running scripts off main thread
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Script PWD: /Users/mateusz.budzisz/git/fabric/git-backup-fabric-mod/run
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Arguments passed: 4
-[15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Player count: 0
+[15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Player count: 1
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): TPS: 12.1340647
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Total levels: 1
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Level names: 'world with space in name'
