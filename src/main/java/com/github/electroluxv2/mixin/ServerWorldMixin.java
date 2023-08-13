@@ -14,7 +14,7 @@ public class ServerWorldMixin implements WorldPropertiesGetter {
     @Shadow @Final private ServerWorldProperties worldProperties;
 
     @Override
-    public Optional<ServerWorldProperties> git_backup_template_1_20_1$getWorldProperties() {
+    public Optional<ServerWorldProperties> backup_scripts_1_20_1$getWorldProperties() {
         return Optional.ofNullable(worldProperties);
     }
 }
