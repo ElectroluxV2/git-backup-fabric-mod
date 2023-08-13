@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "git-backup",
+	"id": "backup-scripts",
 	"version": "${version}",
-	"name": "git-backup",
-	"description": "This executes git add <world> && git commit -m <current date time> && git pushall. See https://stackoverflow.com/a/18674313/7132461 on how to configure pushall",
+	"name": "BackupScripts",
+	"description": "Execute your own scripts at builtin saving system",
 	"authors": [
 		"Mateusz Budzisz"
 	],
@@ -11,15 +11,15 @@
 		"sources": "https://github.com/ElectroluxV2/git-backup-fabric-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/git-backup/icon.png",
+	"icon": "assets/backup-scripts/icon.png",
 	"environment": "server",
 	"entrypoints": {
 		"main": [
-			"com.github.electroluxv2.GitBackupMod"
+			"com.github.electroluxv2.BackupScriptsMod"
 		]
 	},
 	"mixins": [
-		"git-backup.mixins.json"
+		"backup-scripts.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
