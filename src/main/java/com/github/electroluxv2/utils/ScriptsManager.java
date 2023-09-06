@@ -10,10 +10,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.github.electroluxv2.BackupScriptsMod.EXECUTOR;
 import static com.github.electroluxv2.BackupScriptsMod.LOGGER;
 
 public class ScriptsManager {
@@ -22,7 +24,7 @@ public class ScriptsManager {
             .toAbsolutePath();
 
     private static final Path scriptsTargetDirectory = serverRootDirectory
-            .resolve("mods/backup-scripts");
+            .resolve("config/backup-scripts");
 
     private static final Path initScriptPath = scriptsTargetDirectory.resolve("init.sh");
     private static final Path initLastRunPath = scriptsTargetDirectory.resolve(".last-init-run");
@@ -87,17 +89,7 @@ public class ScriptsManager {
         }
 
         LOGGER.info("Running scripts off main thread");
-        final var thread = new Thread(() -> runScript(onSaveScriptPath, parameters));
-        thread.start();
-
-        server.submit(() -> {
-            try {
-                thread.join();
-                LOGGER.info("Shutdown of off main thread");
-            } catch (InterruptedException e) {
-                LOGGER.error("Failed to wait for script thread", e);
-            }
-        });
+        EXECUTOR.execute(() -> runScript(onSaveScriptPath, parameters));
     }
 
     private static void runScript(final Path scriptPath, BackupScriptParameters parameters) {
@@ -114,13 +106,56 @@ public class ScriptsManager {
 
             var process = builder.start();
 
-            BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            lineReader.lines().forEach(line -> LOGGER.info("(%s): %s".formatted(scriptPath.getFileName(), line)));
+            final var stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            final var stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            final var start = Instant.now();
+            var sinceLastMessage = start;
 
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            errorReader.lines().forEach(line -> LOGGER.warn("(%s): %s".formatted(scriptPath.getFileName(), line)));
+            while (process.isAlive() || stdoutReader.ready() || stderrReader.ready()) {
+                final var update = Instant.now();
+
+                var read = false;
+
+                if (stdoutReader.ready()) {
+                    final var line = stdoutReader.readLine();
+                    LOGGER.info("(%s): %s".formatted(scriptPath.getFileName(), line));
+
+                    read = true;
+                }
+
+                if (stderrReader.ready()) {
+                    final var line = stderrReader.readLine();
+                    LOGGER.warn("(%s): %s".formatted(scriptPath.getFileName(), line));
+
+                    read = true;
+                }
+
+                if (read) {
+                    sinceLastMessage = update;
+                }
+
+                final var elapsed = Duration.between(start, update);
+                if (!read && Duration.between(sinceLastMessage, update).getSeconds() > 5) {
+                    final var elapsedString = elapsed
+                            .toString()
+                            .substring(2)
+                            .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                            .toLowerCase();
+
+                    LOGGER.info("Waiting for (%s), time elapsed: %s".formatted(scriptPath.getFileName(), elapsedString));
+                }
+            }
 
             process.waitFor();
+            final var stop = Instant.now();
+            final var elapsed = Duration.between(start, stop);
+            final var elapsedString = elapsed
+                    .toString()
+                    .substring(2)
+                    .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                    .toLowerCase();
+
+            LOGGER.info("Done (%s), time elapsed: %s".formatted(scriptPath.getFileName(), elapsedString));
         } catch (IOException | InterruptedException e) {
             LOGGER.error("Failed to execute (%s):".formatted(scriptPath), e);
         }

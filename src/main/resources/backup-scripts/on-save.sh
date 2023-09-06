@@ -2,7 +2,7 @@
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "TPS: ${2}"
+echo "Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 
@@ -11,8 +11,8 @@ if [ "$1" -le 0 ] ; then
   exit 1
 fi
 
-if (( $(echo "$2 < 10" |bc -l) )) ; then
-  echo "Skipping backup as TPS is too low ($2)"
+if (( $(echo "$2 > 50" |bc -l) )) ; then
+  echo "Skipping backup as tick time is too high ($2)"
   exit 2
 fi
 

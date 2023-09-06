@@ -2,7 +2,7 @@
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "TPS: ${2}"
+echo "Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 

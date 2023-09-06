@@ -9,11 +9,11 @@ import java.util.stream.StreamSupport;
 public record BackupScriptParameters(
         List<String> levelNames,
         int playerCount,
-        float tps
+        float tickTime
 ) {
     public static BackupScriptParameters fromServer(final MinecraftServer server) {
         var playerCount = server.getCurrentPlayerCount();
-        var tps = server.getTickTime();
+        var tickTime = server.getTickTime();
 
         var levelNames = StreamSupport
                 .stream(server.getWorlds().spliterator(), false)
@@ -21,7 +21,7 @@ public record BackupScriptParameters(
                 .distinct()
                 .toList();
 
-        return new BackupScriptParameters(levelNames, playerCount, tps);
+        return new BackupScriptParameters(levelNames, playerCount, tickTime);
     }
 
     public List<String> toArguments() {
@@ -29,7 +29,7 @@ public record BackupScriptParameters(
 
         arguments.add(String.valueOf(playerCount));
 
-        arguments.add(String.valueOf(tps));
+        arguments.add(String.valueOf(tickTime));
 
         arguments.add(String.valueOf(levelNames.size()));
         arguments.addAll(levelNames);

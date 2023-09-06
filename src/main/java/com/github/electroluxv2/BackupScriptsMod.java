@@ -8,12 +8,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class BackupScriptsMod implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("BackupScripts");
+	public static final Executor EXECUTOR = Executors.newSingleThreadExecutor();
 
 	@Override
 	public void onInitialize() {
