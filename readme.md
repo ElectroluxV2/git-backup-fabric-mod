@@ -4,7 +4,7 @@ This mod hooks itself to built in save system and executes scripts:
 
 **Each script is executed in server root directory (next to .jar file) with the following arguments:**
 - `1` - player count
-- `2` - TPS
+- `2` - average tick time (float)
 - `3` - total level names
 - `4+` - level name #n (server may run multiple levels at once, level name is equal to directory name)
 
@@ -14,11 +14,11 @@ Each script is by default executed in `/bin/bash`, but you may provide your shel
 **This script is executed only if contains changes since last execution**
 To manually force execution without changes delete `.last-init-run` file from `mods/backup-scripts` directory.
 ```bash
-# Do not use bang comment here, change default shell by editing `shell` file
+# Do not use Shebang here, change default shell by editing `shell` file
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "TPS: ${2}"
+echo "AVG Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 
@@ -36,6 +36,7 @@ echo "Creating initial commit"
 
 git commit -m "Automatic backup - $(date)"
 echo "Initialization done!"
+
 ```
 Example output:
 ```
@@ -69,11 +70,11 @@ Example output:
 **This script is executed at every auto save (Minecraft performs auto save every 5 minutes, use `save-on` to enable), you may use `save-all` to force save.**
 Default script contents:
 ```bash
-# Do not use bang comment here, change default shell by editing `shell` file
+# Do not use Shebang here, change default shell by editing `shell` file
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "TPS: ${2}"
+echo "AVG Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 
@@ -82,8 +83,9 @@ if [ "$1" -le 0 ] ; then
   exit 1
 fi
 
-if (( $(echo "$2 < 10" |bc -l) )) ; then
-  echo "Skipping backup as TPS is too low ($2)"
+# AVG tick time is float, hence this wierd comparison
+if (( $(echo "$2 > 50" |bc -l) )) ; then
+  echo "Skipping backup as avg tick time is too high ($2)"
   exit 2
 fi
 
@@ -98,7 +100,6 @@ echo "Creating commit"
 git commit -m "Automatic backup - $(date)"
 git push
 echo "Backup done!"
-
 ```
 Example output:
 ```
@@ -106,7 +107,7 @@ Example output:
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Script PWD: /Users/mateusz.budzisz/git/fabric/git-backup-fabric-mod/run
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Arguments passed: 4
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Player count: 1
-[15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): TPS: 12.1340647
+[15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): AVG tick time: 0.1340647
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Total levels: 1
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Level names: 'world with space in name'
 [15:43:50] [Thread-13/INFO] (BackupScripts) (on-save.sh): Adding 'world with space in name' to commit

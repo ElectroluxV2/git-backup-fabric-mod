@@ -1,8 +1,8 @@
-# Do not use bang comment here, change default shell by editing `shell` file
+# Do not use Shebang here, change default shell by editing `shell` file
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "Tick time: ${2}"
+echo "AVG Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 
@@ -11,8 +11,9 @@ if [ "$1" -le 0 ] ; then
   exit 1
 fi
 
+# AVG tick time is float, hence this wierd comparison
 if (( $(echo "$2 > 50" |bc -l) )) ; then
-  echo "Skipping backup as tick time is too high ($2)"
+  echo "Skipping backup as avg tick time is too high ($2)"
   exit 2
 fi
 

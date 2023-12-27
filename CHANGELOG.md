@@ -1,3 +1,7 @@
+## 1.2.1
+- Updated to minecraft 1.20.4
+- Changed script argument tick time to AVG tick time
+
 ## 1.2.0
 - Removed waiting for `on-save.sh` at server tick, now script may run as long as server is still running
 - Moved scripts directory to `config` directory

@@ -1,8 +1,8 @@
-# Do not use bang comment here, change default shell by editing `shell` file
+# Do not use Shebang here, change default shell by editing `shell` file
 echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
-echo "Tick time: ${2}"
+echo "AVG Tick time: ${2}"
 echo "Total levels: ${3}"
 echo "Level names: '${*:4:$3}'"
 

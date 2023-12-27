@@ -5,7 +5,7 @@
   "mixins": [
     "MinecraftDedicatedServerMixin",
     "MinecraftServerMixin",
-    "ServerWorldMixin"
+    "ServerWorldAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
