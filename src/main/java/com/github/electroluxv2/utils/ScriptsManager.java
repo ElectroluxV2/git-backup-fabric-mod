@@ -80,8 +80,8 @@ public class ScriptsManager {
         }
     }
 
-    public static void runOnSaveScript(boolean parallel, MinecraftServer server) {
-        final var parameters = BackupScriptParameters.fromServer(server);
+    public static void runOnSaveScript(boolean parallel, MinecraftServer server, boolean running) {
+        final var parameters = BackupScriptParameters.fromServer(server, running);
 
         if (!parallel) {
             runScript(onSaveScriptPath, parameters);
@@ -98,6 +98,8 @@ public class ScriptsManager {
         cmd.add(shellPath);
         cmd.add(scriptPath.toString());
         cmd.addAll(parameters.toArguments());
+
+        LOGGER.info("Running script: '%s'".formatted(String.join(" ", cmd)));
 
         try {
             var builder = new ProcessBuilder();

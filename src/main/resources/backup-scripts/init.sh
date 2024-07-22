@@ -3,13 +3,14 @@ echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
 echo "AVG Tick time: ${2}"
-echo "Total levels: ${3}"
-echo "Level names: '${*:4:$3}'"
+echo "Server running: ${3}"
+echo "Total levels: ${4}"
+echo "Level names: '${*:5:$4}'"
 
 echo "Creating git repository"
 git init
 
-levelNames=${*:4:$3}
+levelNames=${*:5:$4}
 for levelName in "${levelNames[@]}" # Preventing word splitting, because minecraft level names may contain spaces
 do
     echo "Adding '$levelName' to repository"

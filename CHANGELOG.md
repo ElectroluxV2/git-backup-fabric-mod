@@ -1,3 +1,9 @@
+## 1.3.0
+- Updated to minecraft 1.21.0
+- Added server running argument
+- Improved shutdown behaviour to wait for file handlers to close
+- Changed default scripts to always perform backup on server shutdown
+
 ## 1.2.1
 - Updated to minecraft 1.20.4
 - Changed script argument tick time to AVG tick time

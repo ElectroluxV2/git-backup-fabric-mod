@@ -5,8 +5,9 @@ This mod hooks itself to built in save system and executes scripts:
 **Each script is executed in server root directory (next to .jar file) with the following arguments:**
 - `1` - player count
 - `2` - average tick time (float)
-- `3` - total level names
-- `4+` - level name #n (server may run multiple levels at once, level name is equal to directory name)
+- `3` - server running ("true" or "false")
+- `4` - total level names
+- `5+` - level name #n (server may run multiple levels at once, level name is equal to directory name)
 
 Each script is by default executed in `/bin/bash`, but you may provide your shell by editing `mods/backup-scripts/shell` file.
 
@@ -19,13 +20,14 @@ echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
 echo "AVG Tick time: ${2}"
-echo "Total levels: ${3}"
-echo "Level names: '${*:4:$3}'"
+echo "Server running: ${3}"
+echo "Total levels: ${4}"
+echo "Level names: '${*:5:$4}'"
 
 echo "Creating git repository"
 git init
 
-levelNames=${*:4:$3}
+levelNames=${*:5:$4}
 for levelName in "${levelNames[@]}" # Preventing word splitting, because minecraft level names may contain spaces
 do
     echo "Adding '$levelName' to repository"
@@ -36,7 +38,6 @@ echo "Creating initial commit"
 
 git commit -m "Automatic backup - $(date)"
 echo "Initialization done!"
-
 ```
 Example output:
 ```
@@ -75,21 +76,22 @@ echo "Script PWD: $(pwd)"
 echo "Arguments passed: $#"
 echo "Player count: ${1}"
 echo "AVG Tick time: ${2}"
-echo "Total levels: ${3}"
-echo "Level names: '${*:4:$3}'"
+echo "Server running: ${3}"
+echo "Total levels: ${4}"
+echo "Level names: '${*:5:$4}'"
 
-if [ "$1" -le 0 ] ; then
+if [ "$1" -le 0 ] && [ "$3" = "true" ] ; then
   echo "Skipping backup as no one is online"
   exit 1
 fi
 
 # AVG tick time is float, hence this wierd comparison
-if (( $(echo "$2 > 50" |bc -l) )) ; then
+if (( $(echo "$2 > 50" |bc -l) )) && [ "$3" = "true" ] ; then
   echo "Skipping backup as avg tick time is too high ($2)"
   exit 2
 fi
 
-levelNames=${*:4:$3}
+levelNames=${*:5:$4}
 for levelName in "${levelNames[@]}" # Preventing word splitting, because minecraft level names may contain spaces
 do
     echo "Adding '$levelName' to commit"
