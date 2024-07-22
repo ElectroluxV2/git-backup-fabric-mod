@@ -7,12 +7,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.spi.FileSystemProvider;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import static com.github.electroluxv2.BackupScriptsMod.EXECUTOR;
@@ -46,7 +49,23 @@ public class ScriptsManager {
             return;
         }
 
-        final var scriptsSourceDirectory = Path.of(Objects.requireNonNull(BackupScriptsMod.class.getResource("/backup-scripts")).toURI());
+        final var uri = Objects.requireNonNull(BackupScriptsMod.class.getResource("/backup-scripts")).toURI();
+
+        // https://stackoverflow.com/a/48298758
+        if ("jar".equals(uri.getScheme())) {
+            for (FileSystemProvider provider : FileSystemProvider.installedProviders()) {
+                if (provider.getScheme().equalsIgnoreCase("jar")) {
+                    try {
+                        provider.getFileSystem(uri);
+                    } catch (FileSystemNotFoundException e) {
+                        // in this case we need to initialize it first:
+                        provider.newFileSystem(uri, Collections.emptyMap());
+                    }
+                }
+            }
+        }
+
+        final var scriptsSourceDirectory = Path.of(uri);
         FileUtils.copyDirectory(scriptsSourceDirectory, scriptsTargetDirectory);
     }
 
@@ -80,8 +99,8 @@ public class ScriptsManager {
         }
     }
 
-    public static void runOnSaveScript(boolean parallel, MinecraftServer server) {
-        final var parameters = BackupScriptParameters.fromServer(server);
+    public static void runOnSaveScript(boolean parallel, MinecraftServer server, boolean running) {
+        final var parameters = BackupScriptParameters.fromServer(server, running);
 
         if (!parallel) {
             runScript(onSaveScriptPath, parameters);
@@ -98,6 +117,8 @@ public class ScriptsManager {
         cmd.add(shellPath);
         cmd.add(scriptPath.toString());
         cmd.addAll(parameters.toArguments());
+
+        LOGGER.info("Running script: '%s'".formatted(String.join(" ", cmd)));
 
         try {
             var builder = new ProcessBuilder();
